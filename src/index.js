@@ -9,7 +9,7 @@ app.use(express.json())
 // expected params {to,key,value}
 app.get('/transfer_ethers', async (req, res) => {
     const response = await web3js.signTransaction(req.body)
-    if (response.error)  return res.status(400).send(response.error)
+    if (response.error)  return res.status(400).send({'error': response.error})
     res.status(200).send(response)
 })
 
@@ -23,7 +23,7 @@ app.get('/check_balance', async (req, res) => {
 // create ethers account
 app.get('/create_address', async (req, res) => {
     const response = await web3js.createAccount()
-    if (response.error)  return res.status(400).send(response.error)
+    if (response.error)  return res.status(400).send({'error': response.error})
     res.status(200).send(response)
 })
 
