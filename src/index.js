@@ -5,8 +5,24 @@ const web3js = require('./Lib/web3')
 const port = 3000
 app.use(express.json())
 
-app.get('/send_ethers', async (req, res) => {
+// transfer ethers to a given address
+// expected params {to,key,value}
+app.get('/transfer_ethers', async (req, res) => {
     const response = await web3js.signTransaction(req.body)
+    if (response.error)  return res.status(400).send(response.error)
+    res.status(200).send(response)
+})
+
+// check ethers account balance
+app.get('/check_balance', async (req, res) => {
+    const response = await web3js.checkBalance(req.body.address)
+    if (response.error)  return res.status(400).send({'error': response.error})
+    res.status(200).send(response)
+})
+
+// create ethers account
+app.get('/create_address', async (req, res) => {
+    const response = await web3js.createAccount()
     if (response.error)  return res.status(400).send(response.error)
     res.status(200).send(response)
 })

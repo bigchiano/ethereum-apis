@@ -1,5 +1,6 @@
 const Web3 = require('web3')
-const web3 = new Web3("ws://127.0.0.1:7000")
+// const web3 = new Web3("ws://127.0.0.1:7000")
+const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/f3f30b367c6c45c093d0a7c7bd7709fa'))
 // import lib to enable us read env file
 // const dotenv = require('dotenv');
 // dotenv.config();
@@ -11,6 +12,13 @@ async function createAccount() {
         'address': newAcc.address,
         'privateKey': newAcc.privateKey
     }
+}
+
+async function checkBalance(address) {
+    if (!address) return {'error': 'account address is required'}
+    let balance = await web3.eth.getBalance(address)
+    balance = web3.utils.fromWei(balance)
+    return balance
 }
 
 async function signTransaction(req) {
@@ -38,4 +46,4 @@ async function signTransaction(req) {
     }
 }
 
-module.exports  = { createAccount, signTransaction }
+module.exports  = { createAccount, signTransaction, checkBalance }
