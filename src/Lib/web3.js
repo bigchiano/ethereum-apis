@@ -1,6 +1,6 @@
 const Web3 = require('web3')
-// const web3 = new Web3("ws://127.0.0.1:7000")
-const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/f3f30b367c6c45c093d0a7c7bd7709fa'))
+const web3 = new Web3("ws://127.0.0.1:7000")
+// const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/f3f30b367c6c45c093d0a7c7bd7709fa'))
 // import lib to enable us read env file
 // const dotenv = require('dotenv');
 // dotenv.config();
