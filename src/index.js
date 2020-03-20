@@ -14,7 +14,7 @@ app.use(function(req, res, next) {
 
 // transfer ethers to a given address
 // expected params {to,key,value}
-app.get('/transfer_ethers', async (req, res) => {
+app.post('/transfer_ethers', async (req, res) => {
     const response = await web3js.signTransaction(req.body)
     if (response.error)  return res.status(400).send({'error': response.error})
     res.status(200).send(response)
