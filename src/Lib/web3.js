@@ -21,7 +21,7 @@ async function checkBalance(address) {
     if (!address) return {'error': 'account address is required'}
     let balance = await web3.eth.getBalance(address)
     balance = web3.utils.fromWei(balance)
-    return balance
+    return { balance }
 }
 
 async function signTransaction(req) {
