@@ -1,9 +1,12 @@
 const Web3 = require('web3')
-const web3 = new Web3("ws://127.0.0.1:7000")
-// const web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/f3f30b367c6c45c093d0a7c7bd7709fa'))
+const prodWeb3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/f3f30b367c6c45c093d0a7c7bd7709fa'))
+const localWeb3 = new Web3("ws://127.0.0.1:7454")
+
 // import lib to enable us read env file
-// const dotenv = require('dotenv');
-// dotenv.config();
+const dotenv = require('dotenv');
+dotenv.config();
+
+const web3 = (process.env.NODE_ENV === 'production') ? prodWeb3 : localWeb3
 
 async function createAccount() {
     let newAcc = await web3.eth.accounts.create()
@@ -25,10 +28,16 @@ async function signTransaction(req) {
     try {
         // sign the transaction to prove ownership of the account to send
         // ethers from using the private key
+        // get address nonce
+        const account = await web3.eth.accounts.privateKeyToAccount('0x' + req.key);
+        const pubKey = account.address;
+        const nonce = await web3.eth.getTransactionCount(pubKey)
+
         let signedTx = await web3.eth.accounts.signTransaction({
-            gas: '21000',
             to: req.to,
             value: web3.utils.toWei(`${req.value}`, "ether"),
+            gas: '21000',
+            nonce
         }, req.key)
         
         try {
@@ -39,6 +48,7 @@ async function signTransaction(req) {
                 "error": error.message
             }
         }
+        
     } catch (error) {
         return {
             "error": error.message
