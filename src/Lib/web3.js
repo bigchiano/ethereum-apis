@@ -37,8 +37,9 @@ async function signTransaction(req) {
         const value = web3.utils.toWei(`${req.value}`, "ether")
         // convert gas limit to big number
         const gas = web3.utils.toBN(21000)
-        // convert gas price to wei 
-        const gasPrice = web3.utils.toWei(web3.utils.toBN(1), "gwei");
+        // get and convert gas price to wei 
+        // const gasPrice = web3.utils.toWei(web3.utils.toBN(1), "gwei");
+        const gasPrice = await web3.eth.getGasPrice()
         // calculate cost
         const cost = gas * gasPrice
         // subtract cost from value to send
