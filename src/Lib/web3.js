@@ -29,20 +29,36 @@ async function signTransaction(req) {
         // sign the transaction to prove ownership of the account to send
         // ethers from using the private key
         // get address nonce
-        const account = await web3.eth.accounts.privateKeyToAccount('0x' + req.key);
-        const pubKey = account.address;
+        const account = await web3.eth.accounts.privateKeyToAccount('0x' + req.key)
+        const pubKey = account.address
+        // get transaction count for this wallet
         const nonce = await web3.eth.getTransactionCount(pubKey)
+        // convert amount to send from ether to wei
+        const value = web3.utils.toWei(`${req.value}`, "ether")
+        // convert gas limit to big number
+        const gas = web3.utils.toBN(21000)
+        // convert gas price to wei 
+        const gasPrice = web3.utils.toWei(web3.utils.toBN(1), "gwei");
+        // calculate cost
+        const cost = gas * gasPrice
+        // subtract cost from value to send
+        const sendValue = value - cost
 
-        let signedTx = await web3.eth.accounts.signTransaction({
+        // create object for transaction to sign
+        const txObj = {
             to: req.to,
-            value: web3.utils.toWei(`${req.value}`, "ether"),
-            gas: '21000',
+            value: sendValue,
+            gas,
+            gasPrice,
             nonce
-        }, req.key)
-        
+        }
+
+        const signedTx = await web3.eth.accounts.signTransaction(txObj, req.key)
+
         try {
-            let receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+            const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
             return receipt 
+            
         } catch (error) {
             return {
                 "error": error.message
